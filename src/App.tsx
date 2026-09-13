@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useLayoutEffect } from 'react';
 import { Image, Trash2, BookOpen } from 'lucide-react';
 import { CompressionOptions } from './components/CompressionOptions';
 import { DropZone } from './components/DropZone';
@@ -19,6 +19,16 @@ export function App() {
   });
 
   const { addToQueue } = useImageQueue(options, outputType, setImages);
+
+  useLayoutEffect(() => {
+    const placement = document.getElementById('kix-ad-placement');
+    const nativeAd = document.querySelector<HTMLElement>('.kix-native-ad-section');
+    const sponsoredAd = document.querySelector<HTMLElement>('.kix-sponsored-section');
+
+    if (placement && nativeAd && sponsoredAd && nativeAd.parentElement !== placement) {
+      placement.append(nativeAd, sponsoredAd);
+    }
+  }, []);
 
   const handleOutputTypeChange = useCallback((type: OutputType) => {
     setOutputType(type);
@@ -109,6 +119,8 @@ export function App() {
             images={images}
             onRemove={handleRemoveImage}
           />
+
+          <div id="kix-ad-placement" className="kix-ad-placement" />
 
           {images.length > 0 && (
             <button
